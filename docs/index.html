@@ -6,7 +6,6 @@
 		<title> {TITLE_COMES_HERE} </title>
 		<link rel="icon" type="image/png" href="favicon.png"/>
 
-		<script src="WebKitSpeech.js"></script>
 		<script type="text/javascript">
 			function next (btn) { // 翻頁函數
 				var cur,nxt,e,ut;
@@ -29,12 +28,17 @@
 				}
 
 				ut = e.getAttribute("speech");
-				if(ut) speak(ut)
+				console.log(Piers.Speech);
+				if(ut) Piers.Speech.speak(ut)
 
 				// 捲動頁面
 				e.scrollIntoView( {behavior:"smooth",block:"start"} );
 			}
+			function init_page ( ) {
+				next();
+			}
 		</script>
+		<script PierEntrance="init_page" PierXMods="Speech,StateMachine,Forms,Session" src="piers/init.js"></script>
 
 		<style type="text/css">
 			body {
@@ -116,8 +120,5 @@
 				</div>
 			</div>
 		</div>
-		<script>
-			next();
-		</script>
 	</body>
 </html>
