@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1"/>
+		<title> {TITLE_COMES_HERE} </title>
+		<link rel="icon" type="image/png" href="favicon.png"/>
+
+		<script src="WebKitSpeech.js"></script>
+		<script type="text/javascript">
+			function next (btn) { // 翻頁函數
+				var cur,nxt,e,ut;
+
+				// 找到下一頁的頁數
+				if (btn) {
+					while (true) {
+						cur = btn.getAttribute("page");
+						if( cur ) break;
+						btn = btn.parentNode;
+					}
+					nxt = parseInt(cur)+1;
+				}else nxt = 1
+
+				// 取得下一頁的元素
+				e = document.body.querySelector( '[page="'+nxt+'"]' );
+				if (!e) {
+					nxt = 1;
+					e = document.body.querySelector( '[page="'+nxt+'"]' );
+				}
+
+				ut = e.getAttribute("speech");
+				if(ut) speak(ut)
+
+				// 捲動頁面
+				e.scrollIntoView( {behavior:"smooth",block:"start"} );
+			}
+		</script>
+
+		<style type="text/css">
+			body {
+				width:100%;
+				height:100%;
+				margin:0;
+				padding:0;
+				border:0;
+			}
+			.NxBar {
+				text-align:center;
+				margin:4px 16px;
+				padding:4px;
+				border:2px inset silver;
+			}
+			.ScPage {
+				padding:16px 4px;
+				text-align:center;
+				overflow-x:hidden;
+				overflow-y:auto;
+				position:relative;
+			}
+			[page] { height:100vh; }
+			[page="1"] { background:lightblue; }
+			[page="2"] { background:lightgreen; }
+			[page="3"] { background:lightpink; }
+		</style>
+	</head>
+	<body style="overflow:hidden;">
+		<div page="1" speech="歡迎光臨致理科技大學">
+			<div class="ScPage">
+				<img src="favicon.png" style="height:70vmin;"/>
+				<h1> Chihlee University of Technology </h1>
+				<div class="NxBar">
+					<button onclick="next(this)"> 開始 </button>
+				</div>
+			</div>
+		</div>
+		<div page="2" speech="這是表格的示範">
+			<div class="ScPage">
+				<h1> Page 2 comes here </h1>
+				<table border="1" cellspacing="3" cellpadding="3" width="80%" align="center" style="background:white;">
+					<thead>
+						<tr>
+							<th>第一欄</th>
+							<th>第二欄</th>
+							<th>第三欄</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>1.1</td>
+							<td>1.2</td>
+							<td>1.3</td>
+						</tr>
+						<tr>
+							<td>2.1</td>
+							<td>2.2</td>
+							<td>2.3</td>
+						</tr>
+					</tbody>
+				</table>	
+				<br/>
+				<div class="NxBar">
+					<button onclick="next(this)"> 繼續 </button>
+				</div>
+			</div>
+		</div>
+		<div page="3" speech="這是視訊的示範">
+			<div class="ScPage">
+				<h1> Page 3 comes here </h1>
+				<video width="400" controls>
+  					<source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+  					<source src="https://www.w3schools.com/html/mov_bbb.ogg" type="video/ogg">
+					Your browser does not support HTML video.
+				</video>
+				<div class="NxBar">
+					<button onclick="next(this)"> 繼續 </button>
+				</div>
+			</div>
+		</div>
+		<script>
+			next();
+		</script>
+	</body>
+</html>
