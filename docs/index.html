@@ -5,7 +5,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1"/>
 		<title> {TITLE_COMES_HERE} </title>
 		<link rel="icon" type="image/png" href="favicon.png"/>
-
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 		<script type="text/javascript">
 			function next (btn) { // 翻頁函數
 				var cur,nxt,e,ut;
@@ -165,7 +165,36 @@
 				</div>
 			</div>
 		</div>
-		<div page="5" speech="Canvas">
+		<div page="5" speech="Chart JS">
+			<div style="height:90vh;">
+				<canvas></canvas>
+			</div>
+			<script>
+				const ctx = document.currentScript.parentNode.querySelector("canvas");
+				new Chart(ctx, {
+					type: 'bar',
+					data: {
+						labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+						datasets: [{
+							label: '# of Votes',
+							data: [12, 19, 3, 5, 2, 3],
+							borderWidth: 1
+						}]
+					},
+					options: {
+						scales: {
+							y: {
+								beginAtZero: true
+							}
+						}
+					}
+				});
+			</script>
+			<div class="NxBar">
+				<button onclick="next(this)"> 繼續 </button>
+			</div>
+		</div>
+		<div page="6" speech="Canvas">
 			<div class="ScPage">
 				<canvas width="720" height="480">
 					Your browser does not support the HTML canvas tag.
@@ -220,7 +249,7 @@
 				</div>
 			</div>
 		</div>
-		<div page="6" speech="可縮放向量圖型 SVG">
+		<div page="7" speech="可縮放向量圖型 SVG">
 			<div class="ScPage">
 				<svg height="80vh" width="90vw" viewbox="0,0,720,360">
 					<defs>
