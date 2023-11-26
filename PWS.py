@@ -1,5 +1,5 @@
 from sys import path as libPath, stdin, exit
-from os import listdir, path as Path
+from os import listdir, makedirs, path as Path
 from importlib import import_module
 from re import compile as newRE
 from json import loads as json_parse
@@ -35,6 +35,7 @@ async def main() :
 		"index":"index.html",
 		"pidfile":Path.join(ROOT,"etc/PWS.pid")
 	}
+	makedirs( Path.dirname(cfg["pidfile"]), exist_ok=True )
 	print(cfg)
 
 	if "pidfile" in cfg and cfg["pidfile"] :

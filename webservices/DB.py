@@ -4,7 +4,7 @@ from piers import debug
 from time import time
 from datetime import datetime, timedelta
 from re import compile as newRE
-from os import path as Path, listdir
+from os import path as Path, listdir, makedirs
 
 class WebService :
 	URLPrefix = "DB/"
@@ -12,6 +12,7 @@ class WebService :
 
 	def __init__( self, root ) :
 		self.DBR = Path.join( Path.abspath(root) if root else getcwd(), "db" )
+		makedirs( self.DBR, exist_ok=True )
 		self.S = {
 			"Applier":JStorage( Path.join( self.DBR, "Appliers" ), ["NO","Abbrev","ID","Nation","Agent"] ),
 			"Agent":JStorage( Path.join( self.DBR, "Agents" ), ["NO","Abbrev","ID","Nation"] ),

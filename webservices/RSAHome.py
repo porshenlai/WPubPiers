@@ -1,5 +1,5 @@
 from json import dumps as json_stringify, loads as json_parse
-from os import path as Path, makedirs as mkdir, getcwd
+from os import path as Path, makedirs, getcwd
 from re import compile as newRE
 from aiofile import async_open
 from piers.Data import RSA, LatestNCache
@@ -22,6 +22,7 @@ class WebService :
 
 	def __init__( self, root=None ) :
 		self.Home = Path.join( Path.abspath(root) if root else getcwd(), "db" )
+		makedirs( self.Home, exist_ok=True )
 		self.RSA = RSA( PEMPath=Path.join( self.Home, "KeyPairs.pem" ) )
 		self.DB = SQTable( Path.join(self.Home,"Users.db"), "users", ["A","S","SK","Ks"] )
 		self.DB.open()
