@@ -14,12 +14,12 @@ class WebService :
 		self.DBR = Path.join( Path.abspath(root) if root else getcwd(), "db" )
 		makedirs( self.DBR, exist_ok=True )
 		self.S = {
-			"Applier":JStorage( Path.join( self.DBR, "Appliers" ), ["NO","Abbrev","ID","Nation","Agent"] ),
-			"Agent":JStorage( Path.join( self.DBR, "Agents" ), ["NO","Abbrev","ID","Nation"] ),
-			"Trademark":JStorage( Path.join( self.DBR, "Trademarks" ), ["NO","Name"] ),
-			"Case":JStorage( Path.join( self.DBR, "Cases" ), ["NO","FirstApplierNO","Year","YSN","CertNO","DTReg"] ),
-			"Task":JStorage( Path.join( self.DBR, "Tasks" ), ["NO","TaskID","LDx","ADx","GDx","UsrList"] ),
-			"Attach":AStorage( Path.join( self.DBR, "Attaches" ) ),
+#			"Applier":JStorage( Path.join( self.DBR, "Appliers" ), ["NO","Abbrev","ID","Nation","Agent"] ),
+#			"Agent":JStorage( Path.join( self.DBR, "Agents" ), ["NO","Abbrev","ID","Nation"] ),
+#			"Trademark":JStorage( Path.join( self.DBR, "Trademarks" ), ["NO","Name"] ),
+#			"Case":JStorage( Path.join( self.DBR, "Cases" ), ["NO","FirstApplierNO","Year","YSN","CertNO","DTReg"] ),
+#			"Task":JStorage( Path.join( self.DBR, "Tasks" ), ["NO","TaskID","LDx","ADx","GDx","UsrList"] ),
+#			"Attach":AStorage( Path.join( self.DBR, "Attaches" ) ),
 		}
 		for k in self.S :
 			self.S[k].start()
