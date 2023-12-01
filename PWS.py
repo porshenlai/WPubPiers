@@ -8,6 +8,7 @@ from json import loads as json_parse
 from signal import signal, SIGINT
 
 ROOT = Path.dirname(__file__)
+if ROOT not in libPath : libPath.insert(0,ROOT)
 
 from piers import Async
 from piers.Async_HTTP import WebService, httpPOST, httpPUT
