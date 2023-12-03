@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1"/>
+		<title> TITLE COMES HERE </title>
+		<link rel="icon" type="image/png" href="favicon.png"/>
+		<script type="text/javascript">
+			function calc( root ){
+				var vs,i,r={};
+				vs=root.querySelectorAll("[vn]");
+				for (i=0; i<vs.length; i++) {
+					vn=vs[i].getAttribute("vn").split(":");
+					if (vn[1]){
+						if (vs[i].checked) {
+							if (!(vn[0] in r))
+								r[vn[0]] = [vn[1]];
+							else 
+								r[vn[0]].push(vn[1]);
+						}
+					}else r[vn[0]] = vs[i].value;
+				}
+				return r;
+			}
+		</script>
+
+		<style type="text/css">
+			body {
+				width:100%;
+				height:100%;
+				margin:0;
+				padding:0;
+				border:0;
+			}
+			th,td {
+				text-align:center;
+				vertial-align:middle;
+			}
+		</style>
+	</head>
+	<body style="overflow:hidden;">
+		<form onsubmit="alert(JSON.stringify(calc(this))); return false;">
+		<table border="1" align="center" style="width:90vw;height:90vh;">
+			<thead>
+				<tr>
+					<td style="background-color:darkblue;color:yellow;">0</td>
+					<td colspan="2">1</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td rowspan="2" style="font-size:200%">
+						T <input type="text" vn="T"/>
+					</td>
+					<td style="border:0">
+						N <input type="number" min="0" max="10" vn="N"/>
+					</td>
+					<td style="border:4px solid brown">
+						D <input type="date" vn="D"/>
+					</td>
+				</tr>
+				<tr>
+					<td style="border:4px solid green">
+						<input type="radio" name="C" vn="C:A"/>A
+						<br/>
+						<input type="radio" name="C" vn="C:B"/>B
+					</td>
+					<td style="background-color:red;color:purple;">
+						<input type="submit"/>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		</form>
+	</body>
+</html>
