@@ -16,28 +16,38 @@
 			}
 		</style>
 	</head>
-	<body style="overflow:hidden;">
-		<div style="height:90vh;">
+	<body>
+		<h1><a href="https://www.w3schools.com/js/js_graphics_chartjs.asp" target="_blank">Chart JS</a></h1>
+		<div style="width:80vh">
 			<canvas></canvas>
 		</div>
 		<script>
-			const ctx = document.currentScript.parentNode.querySelector("canvas");
-			new Chart(ctx, {
-				type: 'bar',
+			const xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
+			const yValues = {
+				"2018":[55, 49, 44, 24, 15],
+				"2017":[60, 45, 48, 28, 12],
+			};
+			new Chart(document.currentScript.parentNode.querySelector("canvas"), {
+				type: 'pie',
 				data: {
-					labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+					labels: xValues,
 					datasets: [{
-						label: '# of Votes',
-					data: [12, 19, 3, 5, 2, 3],
+						label: "2018",
+						data: yValues["2018"],
+						borderWidth: 1
+					},{
+						label: "2017",
+						data: yValues["2017"],
+						borderWidth: 1
+					},{
+						label: "2016",
+						data: yValues["2018"],
+						borderWidth: 1
+					},{
+						label: "2015",
+						data: yValues["2017"],
 						borderWidth: 1
 					}]
-				},
-				options: {
-					scales: {
-						y: {
-							beginAtZero: true
-						}
-					}
 				}
 			});
 		</script>
