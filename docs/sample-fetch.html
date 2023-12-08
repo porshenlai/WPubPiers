@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1"/>
+		<title> Fetch AND Plot </title>
+		<link rel="icon" type="image/png" href="favicon.png"/>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script type="text/javascript">
+			var Data={ }
+
+			async function getDoc(url){
+				try{
+					const response = await fetch(url),
+						  reader = response.body.getReader();
+
+					let c,s="";
+					while( !(c=await reader.read()).done )
+						s += await new TextDecoder("utf-8").decode(c.value);
+
+					return JSON.parse(s);
+				}catch(x){ console.log("Excepton:",x); }
+			}
+
+			async function start(){
+				try{
+					let v = document.getElementById("DataTable"), d;
+				    	d = await getDoc(document.querySelector('form>[type="text"]').value);
+
+					Data.Doc = d;
+					v.innerHTML = d.data.reduce(function(r,v){	// draw <tr>...</tr>
+						return d.cols.reduce(function(r,k){		// draw <td>...</td>
+							r+="<td>"+v[k]+"</td>";
+							return r;
+						},r+"<tr>")+"</tr>";
+					},"")
+					return false;
+				}catch(x){ console.trace(x); }
+			}
+		</script>
+
+		<style type="text/css">
+			body {
+				width:100%;
+				height:100%;
+				margin:0;
+				padding:0;
+				border:0;
+				overflow-y:auto;
+			}
+			.funcBlock {
+				border:1px solid silver;
+				margin:4px;
+				padding:8px 2px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="funcBlock">
+			<form onsubmit="start(); return false;" style="text-align:center;">
+				<input type="text" value="sheet.json"/>
+				<input type="submit"/>
+			</form>
+		</div>
+		<div class="funcBlock">
+			<table border="1" cellspacing="3" cellpadding="3" width="90%" align="center">
+				<tbody id="DataTable">
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html>
