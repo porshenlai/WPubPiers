@@ -34,7 +34,7 @@ async def main() :
 		"host":"0.0.0.0",
 		"port":8780,
 		"root":Path.join(ROOT,"docs"),
-		"modules":["RSAHome","DB","Adm"],
+		"modules":["RSAHome","DB","Test","Adm"],
 		"index":"index.html",
 		"pidfile":Path.join(ROOT,"etc/PWS.pid")
 	}
