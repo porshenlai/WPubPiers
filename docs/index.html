@@ -3,11 +3,81 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1"/>
-		<title> INDEX PAGE </title>
+		<title> Porshen Lai / the trend of TW.0050 </title>
 		<link rel="icon" type="image/png" href="favicon.png"/>
 		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 		<script type="text/javascript">
-			console.log("HELLO WORLD");
+
+			let DB={};
+
+			async function getDoc(url){
+				try{
+					const response = await fetch(url),
+						  reader = response.body.getReader();
+
+					let c,s="";
+					while( !(c=await reader.read()).done )
+						s += await new TextDecoder("utf-8").decode(c.value);
+
+					return JSON.parse(s);
+				}catch(x){ console.log("Excepton:",x); }
+			}
+
+			async function draw(doc,opts={}){ // Chart.js 繪圖
+				if(!opts.C) opts.C=Object.keys(doc);
+				let is = Object.values(doc[opts.C.shift()]);
+				(function(s,u){
+					opts.S=0;
+					opts.U=is.length;
+					for(let i=0;i<is.length;i++){
+						if(is[i]<=s) opts.S=i;
+						if(is[i]>u){ opts.U=i; break; }
+					}
+				})(opts.S||is[0], opts.U||is[is.length-1]);
+
+				if (DB.chart) DB.chart.destroy();
+
+				DB.chart = new Chart(document.querySelector("canvas"), {
+					type: 'line',
+					data: {
+						labels: is.slice(opts.S,opts.U),
+						datasets: opts.C.reduce(function(r,k){
+							r.push({
+								label: k,
+								data: Object.values(doc[k]).slice(opts.S,opts.U),
+								borderWidth: 1
+							});
+							return r;
+						}, [])
+					}
+				});
+			}
+
+			async function play_table(target){
+				document.getElementById("TargetName").textContent = target;
+
+				let d = await getDoc("db/"+target+".json"),
+					vd = document.getElementById("TableData"),
+					vh = document.getElementById("TableHead");
+
+				let cs=Object.keys(d),s="";
+				vh.innerHTML=cs.reduce(function(r,k){
+					return r+"<th>"+k+"</th>";
+				},"<tr>")+"</tr>"
+				vd.innerHTML=Object.keys(d[cs[0]]).reverse().reduce(function(r,i){
+					return cs.reduce(function(r,k,x){
+						let v = x===0 ? d[k][i] : parseFloat(d[k][i]).toFixed(2);
+						return r+"<td>"+v+"</td>";
+					},r+"<tr>")+"</tr>";
+				},"");
+				DB.Doc = d;
+			}
+
+			async function play_chart( since, until ){
+				if (DB.Doc && since && until)
+					await draw(DB.Doc,{ "S":since, "U":until });
+			}
+
 		</script>
 
 		<style type="text/css">
@@ -17,49 +87,75 @@
 				margin:0;
 				padding:0;
 				border:0;
+				overflow-y:auto;
+			}
+			.funcBlock {
+				border:1px solid silver;
+				margin:4px;
+				padding:8px 2px;
+			}
+			#TargetName {
+				font-size:200%;
+				font-weight:bolder;
+			}
+			#TableHead {
+				text-align:center;
+			}
+			#TableData {
+				text-align:right;
 			}
 		</style>
 	</head>
 	<body>
-		<table width="center" width="90%" border="1" cellspacing="3" cellpadding="3">
-			<thead>
-			</thead>
-			<tbody>
-				<tr>
-					<td rowspan="6">DOM</td>
-					<td><a href="sample-blank.html">sample-blank.html</a></td>
-					<td>空白頁面</td>
-				</tr>
-				<tr>
-					<td><a href="sample-table.html">sample-table.html</a></td>
-					<td>表格</td>
-				</tr>
-				<tr>
-					<td><a href="sample-style.html">sample-style.html</a></td>
-					<td>樣式</td>
-				</tr>
-				<tr>
-					<td><a href="sample-input.html">sample-input.html</a></td>
-					<td>輸入</td>
-				</tr>
-				<tr>
-					<td><a href="sample-fetch.html">sample-fetch.html</a></td>
-					<td>取資料</td>
-				</tr>
-				<tr>
-					<td><a href="sample-chartjs.html">sample-chartjs.html</a></td>
-					<td>繪圖</td>
-				</tr>
-				<tr>
-					<td rowspan="2">複合<br/>範例</td>
-					<td><a href="sample-fetch-and-plot.html">sample-fetch-and-plot.html</a></td>
-					<td>下載，陳列並繪圖</td>
-				</tr>
-				<tr>
-					<td><a href="sample-pages.html">sample-pages.html</a></td>
-					<td>上下捲頁</td>
-				</tr>
-			</tbody>
-		</table>
+		<h1>Taiwan Stock Market, the Trend</h1>
+
+		<div class="funcBlock">
+			<span id="TargetName">-</span>
+			<select id="DataPicker" onchange="play_table(this.value);this.value='-';" style="float:right"></select>
+			<script>
+			(async function(out){
+				let d = await getDoc("__api__/Test/listdb");
+				while(out.firstChild) out.removeChild(out.firstChild);
+				function co(txt,val){
+					let o = document.createElement("option");
+					o.setAttribute("value",val);
+					o.setAttribute("selected",true);
+					o.textContent=txt;
+					return o;
+				}
+				out.appendChild(co("Choose one","-"));
+				d.List.forEach(function(v){ v=v.replace('.json',''); out.appendChild(co(v,v)); });
+			})(document.getElementById("DataPicker"));
+			</script>
+		</div>
+		<div class="funcBlock" style="height:100vh;overflow:auto;">
+			<table border="1" cellspacing="3" cellpadding="3" width="90%" align="center">
+				<thead id="TableHead">
+				</thead>
+				<tbody id="TableData">
+				</tbody>
+			</table>
+		</div>
+		<div class="funcBlock">
+			<div onchange="play_chart(this.querySelector('#Since').value, this.querySelector('#Until').value)" style="text-align:center">
+				<input id="Since" type="date"/>
+				-
+				<input id="Until" type="date"/>
+				<script>
+					let today=new Date;
+					document.getElementById("Since").value=(new Date(today-86400000*30)).toISOString().replace(/T.*/,'');
+					document.getElementById("Until").value=today.toISOString().replace(/T.*/,'');
+				</script>
+			</div>
+			<div style="position:relative;left:5vw;width:90vw;">
+				<canvas></canvas>
+			</div>
+		</div>
+
+		<div style="text-align:right">
+			References: 
+			<a href="samples.html">Samples</a>,
+			<a href="https://www.w3schools.com/js/js_graphics_chartjs.asp">Chart JS</a>
+		</div>
 	</body>
 </html>
