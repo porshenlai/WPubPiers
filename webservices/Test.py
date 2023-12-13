@@ -13,6 +13,7 @@ class WebService :
 		self.DBR = Path.join( Path.abspath(root) if root else getcwd(), "db" )
 		self.DBW = Path.join( Path.abspath(root) if root else getcwd(), "docs/db" )
 		makedirs( self.DBR, exist_ok=True )
+		makedirs( self.DBW, exist_ok=True )
 
 	async def GET_listdb( self, rio ) :
 		target = rio.path.group(2)
