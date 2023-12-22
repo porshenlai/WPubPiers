@@ -1,5 +1,3 @@
-# PORSHENLAI MODIFIED AT 2023/11/27
-
 from sys import path as libPath, stdin, exit
 from os import listdir, makedirs, path as Path
 from importlib import import_module
@@ -20,7 +18,7 @@ class PWS( WebService ) :
 		for mn in modules :
 			mod = self.reg_module(
 				import_module("webservices."+mn),
-				args = {"root":Path.realpath(ROOT)},
+				args = {"root":Path.realpath(Path.join(Path.dirname(home),".."))},
 				prefix = "__api__"
 			)
 			if hasattr(mod,"installSession") : self.AuthMod = mod
@@ -38,7 +36,8 @@ async def main() :
 		"index":"index.html",
 		"pidfile":Path.join(ROOT,"etc/PWS.pid")
 	}
-	makedirs( Path.dirname(cfg["pidfile"]), exist_ok=True )
+	makedirs(Path.dirname(cfg["pidfile"]), exist_ok=True)
+	# cfg.update(json_parse(stdin.read()))
 	print(cfg)
 
 	if "pidfile" in cfg and cfg["pidfile"] :
@@ -53,10 +52,9 @@ async def main() :
 		
 	ws = PWS(
 		host = "%s:%d" % (cfg["host"],cfg["port"]),
-		home = Path.join(cfg["root"],cfg["index"]),
+		home = Path.join(cfg["root"],"docs",cfg["index"]),
 		modules = cfg["modules"],
 		cafiles = (cfg["cert"],cfg["key"]) if "cert" in cfg and cfg["cert"] and "key" in cfg and cfg["key"] else None
-
 	)
 	signal(SIGINT,lambda sig,frame : Async.addTask(ws.stop()))
 	print("Web Server is ",ws);
