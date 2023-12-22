@@ -34,7 +34,7 @@ async def main() :
 		"host":"0.0.0.0",
 		"port":8780,
 		"root":Path.join(ROOT,"docs"),
-		"modules":[ d[:-3] for d in listdir("webservices") if d.endswith(".py") ],
+		"modules":[ d[:-3] for d in listdir(Path.join(ROOT,"webservices")) if d.endswith(".py") ],
 		"index":"index.html",
 		"pidfile":Path.join(ROOT,"etc/PWS.pid")
 	}
