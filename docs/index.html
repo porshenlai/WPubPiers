@@ -24,27 +24,29 @@
 			}
 
 			async function draw(doc,opts={}){ // Chart.js 繪圖
-				if(!opts.C) opts.C=Object.keys(doc);
-				let is = Object.values(doc[opts.C.shift()]);
 				(function(s,u){
 					opts.S=0;
-					opts.U=is.length;
-					for(let i=0;i<is.length;i++){
-						if(is[i]<=s) opts.S=i;
-						if(is[i]>u){ opts.U=i; break; }
+					opts.U=doc.length;
+					for(let i=0;i<doc.length;i++){
+						if(doc[i].Date<=s) opts.S=i;
+						if(doc[i].Date>u){ opts.U=i; break; }
 					}
-				})(opts.S||is[0], opts.U||is[is.length-1]);
+				})(opts.S||doc[0].Date, opts.U||doc[doc.length-1].Date);
+
+				doc=doc.reduce(function(rr,vv){
+					opts.C.reduce(function(r,v){ r[v].push(vv[v]); return r; },rr);
+					return rr;
+				}, opts.C.reduce(function(r,v){ r[v] = []; return r; },{}));
 
 				if (DB.chart) DB.chart.destroy();
-
 				DB.chart = new Chart(document.querySelector("canvas"), {
 					type: 'line',
 					data: {
-						labels: is.slice(opts.S,opts.U),
-						datasets: opts.C.reduce(function(r,k){
+						labels: doc.Date.slice(opts.S,opts.U),
+						datasets: opts.C.slice(1).reduce(function(r,k){
 							r.push({
 								label: k,
-								data: Object.values(doc[k]).slice(opts.S,opts.U),
+								data: doc[k].slice(opts.S,opts.U),
 								borderWidth: 1
 							});
 							return r;
@@ -56,26 +58,47 @@
 			async function play_table(target){
 				document.getElementById("TargetName").textContent = target;
 
-				let d = await getDoc("db/"+target+".json"),
-					vd = document.getElementById("TableData"),
-					vh = document.getElementById("TableHead");
+				let d,doc,vd,vh,cs,i;
+				vd = document.getElementById("TableData");
+				vh = document.getElementById("TableHead");
+				d = await getDoc("db/"+target+".json");
+				if(!d.Date) return alert("Date column is required");
 
-				let cs=Object.keys(d),s="";
+				cs = DB.Columns = Object.keys(d);
+				doc = DB.Values = Object.keys(d.Date).reduce(function(r,v){
+					r.push(
+						cs.reduce(function(rr,vv){
+							if(v in d[vv]) rr[vv]=d[vv][v];
+							return rr;
+						},{})
+					);
+					return r;
+				},[]);
+				doc.forEach(function(v){
+					if("number"===typeof(v.Date))
+						v.Date=new Date(v.Date).toISOString().substr(0,10);
+				});
+				doc=doc.sort(function(a,b){ return a.Date < b.Date ? -1 : a.Date > b.Date ? 1 : 0; });
+
+				i=cs.reduce(function(r,v){ r[v] = 0; return r; },{});
+				doc.forEach(function(v){ Object.assign(i,v); Object.assign(v,i); });
+
+				cs.splice(cs.indexOf("Date"),1)
+				cs.unshift("Date");
 				vh.innerHTML=cs.reduce(function(r,k){
 					return r+"<th>"+k+"</th>";
 				},"<tr>")+"</tr>"
-				vd.innerHTML=Object.keys(d[cs[0]]).reverse().reduce(function(r,i){
+				vd.innerHTML=doc.slice().reverse().reduce(function(r,v){
 					return cs.reduce(function(r,k,x){
-						let v = x===0 ? d[k][i] : parseFloat(d[k][i]).toFixed(2);
-						return r+"<td>"+v+"</td>";
+						let val = x===0 ? v[k] : parseFloat(v[k]).toFixed(2);
+						return r+"<td>"+val+"</td>";
 					},r+"<tr>")+"</tr>";
 				},"");
-				DB.Doc = d;
 			}
 
 			async function play_chart( since, until ){
-				if (DB.Doc && since && until)
-					await draw(DB.Doc,{ "S":since, "U":until });
+				if (DB.Values && since && until)
+					await draw(DB.Values,{ "C":DB.Columns, "S":since, "U":until });
 			}
 
 		</script>
