@@ -8,9 +8,7 @@ from os import path
 
 for a in argv[1:] :
     df = read_excel(a)
-
     print(df.head())
-
     print(path.join("docs/db/",path.basename(a)+".json"));
     df.to_json(path.join("docs/db/",path.basename(a)+".json"));
 
